@@ -1,11 +1,11 @@
 <?php
-namespace WPOrgSubmissionRules\Sniffs\I18n;
+namespace WPOrgSubmissionRules\Sniffs;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Util\Tokens;
 
-class GettextStringLiteralSniff implements Sniff
+class TranslationFunctionStringLiteralSniff implements Sniff
 {
     /**
      * Returns the tokens that this sniff is interested in.
@@ -15,7 +15,7 @@ class GettextStringLiteralSniff implements Sniff
         return [T_STRING];
     }
 
-    /**
+	/**
      * Processes the tokens and identifies errors.
      */
     public function process(File $phpcsFile, $stackPtr)
@@ -28,7 +28,8 @@ class GettextStringLiteralSniff implements Sniff
             'esc_attr__', 'esc_attr_e', 'esc_attr_x'
         ];
 
-        if (in_array($functionName, $gettextFunctions, true) === false) {
+        // Only target known translation functions
+        if (!in_array($functionName, $gettextFunctions, true)) {
             return;
         }
 
@@ -36,22 +37,30 @@ class GettextStringLiteralSniff implements Sniff
         $closingParenthesis = $tokens[$openingParenthesis]['parenthesis_closer'];
         $parameters = $this->getFunctionParameters($phpcsFile, $openingParenthesis, $closingParenthesis);
 
-        if (isset($parameters[0]) && $tokens[$parameters[0]]['code'] !== T_CONSTANT_ENCAPSED_STRING) {
-            $phpcsFile->addError(
-                'The text parameter of %s() must be a string literal, not a variable or function call.',
-                $stackPtr,
-                'TextNotLiteral',
-                [$functionName]
-            );
+        // Check the first parameter (text to be translated)
+        if (isset($parameters[0])) {
+            $textToken = $tokens[$parameters[0]];
+            if ($textToken['code'] !== T_CONSTANT_ENCAPSED_STRING) {
+                $phpcsFile->addError(
+                    'The text parameter of %s() must be a string literal, not a variable or function call.',
+                    $stackPtr,
+                    'TextNotLiteral',
+                    [$functionName]
+                );
+            }
         }
 
-        if (isset($parameters[1]) && $tokens[$parameters[1]]['code'] !== T_CONSTANT_ENCAPSED_STRING) {
-            $phpcsFile->addError(
-                'The text domain parameter of %s() must be a string literal.',
-                $stackPtr,
-                'TextDomainNotLiteral',
-                [$functionName]
-            );
+        // Check the second parameter (text domain)
+        if (isset($parameters[1])) {
+            $domainToken = $tokens[$parameters[1]];
+            if ($domainToken['code'] !== T_CONSTANT_ENCAPSED_STRING) {
+                $phpcsFile->addError(
+                    'The text domain parameter of %s() must be a string literal.',
+                    $stackPtr,
+                    'TextDomainNotLiteral',
+                    [$functionName]
+                );
+            }
         }
     }
 
@@ -62,27 +71,27 @@ class GettextStringLiteralSniff implements Sniff
     {
         $tokens = $phpcsFile->getTokens();
         $params = [];
-        $level = 0;
+        $currentLevel = 0;
+        $lastParam = $openParenthesis + 1;
 
         for ($i = $openParenthesis + 1; $i < $closeParenthesis; $i++) {
-            // Skip nested parentheses
+            // Keep track of nested parentheses
             if ($tokens[$i]['code'] === T_OPEN_PARENTHESIS) {
-                $level++;
+                $currentLevel++;
             } elseif ($tokens[$i]['code'] === T_CLOSE_PARENTHESIS) {
-                if ($level === 0) {
-                    break;
-                }
-                $level--;
+                $currentLevel--;
             }
 
-            // Find commas, they separate parameters
-            if ($tokens[$i]['code'] === T_COMMA && $level === 0) {
-                $params[] = $i;
+            // Comma separates parameters
+            if ($tokens[$i]['code'] === T_COMMA && $currentLevel === 0) {
+                $params[] = $phpcsFile->findNext(Tokens::$emptyTokens, $lastParam, $i, true);
+                $lastParam = $i + 1;
             }
         }
 
-        // Add closing parenthesis as the end of the last parameter
-        $params[] = $closeParenthesis;
+        // Add the last parameter (or only one if no comma)
+        $params[] = $phpcsFile->findNext(Tokens::$emptyTokens, $lastParam, $closeParenthesis, true);
+
         return $params;
     }
 }
