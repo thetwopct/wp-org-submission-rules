@@ -52,15 +52,24 @@ class UniqueNameSniff implements Sniff
     /**
      * Check if the given name has the correct prefix.
      */
-    private function checkPrefix(File $phpcsFile, $stackPtr, $name)
-    {
-        if (strpos($name, $this->requiredPrefix) !== 0) {
-            $phpcsFile->addError(
-                'The element "%s" must use the prefix "%s".',
-                $stackPtr,
-                'MissingPrefix',
-                [$name, $this->requiredPrefix]
-            );
-        }
-    }
+	private function checkPrefix(File $phpcsFile, $stackPtr, $name)
+	{
+		if (empty($this->requiredPrefix)) {
+			$phpcsFile->addError(
+				'No prefix is set. Please set the "requiredPrefix" property in your ruleset.xml.',
+				$stackPtr,
+				'MissingPrefixProperty'
+			);
+			return;
+		}
+
+		if (strpos($name, $this->requiredPrefix) !== 0) {
+			$phpcsFile->addError(
+				'The element "%s" must use the prefix "%s".',
+				$stackPtr,
+				'MissingPrefix',
+				[$name, $this->requiredPrefix]
+			);
+		}
+	}
 }
