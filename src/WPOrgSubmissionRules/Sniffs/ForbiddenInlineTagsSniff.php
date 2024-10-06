@@ -1,5 +1,5 @@
 <?php
-namespace WP_Org_Submission_Rules\ForbiddenTags;
+namespace WPOrgSubmissionRules\Sniffs;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
@@ -17,7 +17,11 @@ class ForbiddenInlineTagsSniff implements Sniff
         $content = strtolower($tokens[$stackPtr]['content']);
 
         if (strpos($content, '<script') !== false || strpos($content, '<style') !== false) {
-            $phpcsFile->addError('Inline <script> or <style> tags are forbidden.', $stackPtr, 'ForbiddenTags');
+            $phpcsFile->addError(
+				'Inline <script> or <style> tags are forbidden.',
+				$stackPtr,
+				'ForbiddenTags'
+			);
         }
     }
 }

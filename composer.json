@@ -24,7 +24,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"WP_Org_Submission_Rules\\": "src/"
+			"WPOrgSubmissionRules\\": "src/"
 		}
 	},
 	"scripts": {
