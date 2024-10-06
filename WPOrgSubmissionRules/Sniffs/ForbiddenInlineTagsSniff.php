@@ -22,7 +22,7 @@ class ForbiddenInlineTagsSniff implements Sniff
             $phpcsFile->addError(
                 'Inline <script> or <style> tags are forbidden.',
                 $stackPtr,
-                'ForbiddenTags'
+                'WPOrgSubmissionRules.ForbiddenInlineTagsSniff.ForbiddenTags'
             );
         }
     }

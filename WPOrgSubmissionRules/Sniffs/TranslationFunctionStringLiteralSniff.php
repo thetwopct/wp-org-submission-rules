@@ -44,7 +44,7 @@ class TranslationFunctionStringLiteralSniff implements Sniff
                 $phpcsFile->addError(
                     'The text parameter of %s() must be a string literal, not a variable or function call.',
                     $stackPtr,
-                    'TextNotLiteral',
+                    'WPOrgSubmissionRules.TranslationFunctionStringLiteralSniff.TextNotLiteral',
                     [$functionName]
                 );
             }
@@ -57,7 +57,7 @@ class TranslationFunctionStringLiteralSniff implements Sniff
                 $phpcsFile->addError(
                     'The text domain parameter of %s() must be a string literal.',
                     $stackPtr,
-                    'TextDomainNotLiteral',
+                    'WPOrgSubmissionRules.TranslationFunctionStringLiteralSniff.TextDomainNotLiteral',
                     [$functionName]
                 );
             }

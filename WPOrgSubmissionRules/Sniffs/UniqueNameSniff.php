@@ -58,7 +58,7 @@ class UniqueNameSniff implements Sniff
             $phpcsFile->addError(
                 'The element "%s" must use the prefix "%s".',
                 $stackPtr,
-                'MissingPrefix',
+                'WPOrgSubmissionRules.UniqueNameSniff.MissingPrefix',
                 [$name, $this->requiredPrefix]
             );
         }
