@@ -1,0 +1,33 @@
+{
+	"name": "thetwopct/wp-org-submission-rules",
+	"type": "phpcodesniffer-standard",
+	"description": "PHP_CodeSniffer rules (sniffs) to enforce rules required when submitting to WordPress.org Plugin Repository",
+	"keywords": [
+		"phpcs",
+		"WordPress"
+	],
+	"license": "GPL-3.0-or-later",
+	"authors": [
+		{
+			"name": "James Hunt",
+			"homepage": "https://www.thetwopercent.co.uk"
+		}
+	],
+	"require": {
+		"php": ">=5.4",
+		"squizlabs/php_codesniffer": "^3.9.0"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"autoload": {
+		"psr-4": {
+			"WP_Org_Submission_Rules\\": "src/"
+		}
+	},
+	"scripts": {
+        "phpcs": "phpcs"
+    }
+}
