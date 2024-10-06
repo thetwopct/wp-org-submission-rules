@@ -1,5 +1,5 @@
 <?php
-namespace WPOrgSubmissionRules\Sniffs;
+namespace WPOrgSubmissionRules\Sniffs\Internationalization;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
@@ -44,7 +44,7 @@ class TranslationFunctionStringLiteralSniff implements Sniff
                 $phpcsFile->addError(
                     'The text parameter of %s() must be a string literal, not a variable or function call.',
                     $stackPtr,
-                    'WPOrgSubmissionRules.TranslationFunctionStringLiteralSniff.TextNotLiteral',
+                    'TextNotLiteral',
                     [$functionName]
                 );
             }
@@ -57,7 +57,7 @@ class TranslationFunctionStringLiteralSniff implements Sniff
                 $phpcsFile->addError(
                     'The text domain parameter of %s() must be a string literal.',
                     $stackPtr,
-                    'WPOrgSubmissionRules.TranslationFunctionStringLiteralSniff.TextDomainNotLiteral',
+                    'TextDomainNotLiteral',
                     [$functionName]
                 );
             }

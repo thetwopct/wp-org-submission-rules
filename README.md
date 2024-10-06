@@ -27,3 +27,9 @@ or access the standard directly from the command line as per other standards:
 ```
 phpcs --standard=WPOrgSubmissionRules your-file.php
 ```
+
+## What are you detecting
+
+- Use wp_enqueue commands
+- Internationalization: Don't use variables or defines as text, context or text domain parameters.
+- Generic function/class/define/namespace/option names

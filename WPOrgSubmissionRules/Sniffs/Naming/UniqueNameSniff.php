@@ -1,5 +1,5 @@
 <?php
-namespace WPOrgSubmissionRules\Sniffs;
+namespace WPOrgSubmissionRules\Sniffs\Naming;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
@@ -58,7 +58,7 @@ class UniqueNameSniff implements Sniff
             $phpcsFile->addError(
                 'The element "%s" must use the prefix "%s".',
                 $stackPtr,
-                'WPOrgSubmissionRules.UniqueNameSniff.MissingPrefix',
+                'MissingPrefix',
                 [$name, $this->requiredPrefix]
             );
         }

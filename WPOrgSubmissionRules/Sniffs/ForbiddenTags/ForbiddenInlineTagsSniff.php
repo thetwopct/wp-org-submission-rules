@@ -1,5 +1,5 @@
 <?php
-namespace WPOrgSubmissionRules\Sniffs;
+namespace WPOrgSubmissionRules\Sniffs\ForbiddenTags;
 
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
@@ -22,7 +22,7 @@ class ForbiddenInlineTagsSniff implements Sniff
             $phpcsFile->addError(
                 'Inline <script> or <style> tags are forbidden.',
                 $stackPtr,
-                'WPOrgSubmissionRules.ForbiddenInlineTagsSniff.ForbiddenTags'
+                'ForbiddenTags'
             );
         }
     }
