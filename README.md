@@ -28,6 +28,16 @@ or access the standard directly from the command line as per other standards:
 phpcs --standard=WPOrgSubmissionRules your-file.php
 ```
 
+One of the rules looks for unique names, and you can add a prefix in your custom rules:
+
+```
+<rule ref="WPOrgSubmissionRules.Naming.UniqueName">
+	<properties>
+		<property name="requiredPrefix" value="my_unique_name_" />
+	</properties>
+</rule>
+```
+
 ## What are you detecting
 
 - Use wp_enqueue commands
