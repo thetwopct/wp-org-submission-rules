@@ -17,10 +17,10 @@ class UniqueNameSniff implements Sniff
     public function register()
     {
         return [
-            T_FUNCTION,  // For detecting functions
-            T_CLASS,     // For detecting classes
-            T_STRING,    // For detecting actions, filters, transients, etc.
-            T_CONSTANT_ENCAPSED_STRING, // For transients or options
+            T_FUNCTION,
+            T_CLASS,
+            T_STRING,
+            T_CONSTANT_ENCAPSED_STRING,
         ];
     }
 
@@ -32,19 +32,15 @@ class UniqueNameSniff implements Sniff
         $tokens = $phpcsFile->getTokens();
         $tokenContent = $tokens[$stackPtr]['content'];
 
-        // Check for functions and classes that need prefixes
         if ($tokens[$stackPtr]['code'] === T_FUNCTION || $tokens[$stackPtr]['code'] === T_CLASS) {
             $this->checkPrefix($phpcsFile, $stackPtr, $tokenContent);
         }
 
-        // Check for string tokens for transients, actions, options
         if ($tokens[$stackPtr]['code'] === T_STRING || $tokens[$stackPtr]['code'] === T_CONSTANT_ENCAPSED_STRING) {
-            // Exclude standard WordPress functions and translations
             if (in_array($tokenContent, ['__', '_n', '_e', '_x'], true)) {
                 return;
             }
 
-            // For things like do_action(), set_transient(), etc.
             $this->checkPrefix($phpcsFile, $stackPtr, $tokenContent);
         }
     }
@@ -54,15 +50,6 @@ class UniqueNameSniff implements Sniff
      */
 	private function checkPrefix(File $phpcsFile, $stackPtr, $name)
 	{
-		if (empty($this->requiredPrefix)) {
-			$phpcsFile->addError(
-				'No prefix is set. Please set the "requiredPrefix" property in your ruleset.xml.',
-				$stackPtr,
-				'MissingPrefixProperty'
-			);
-			return;
-		}
-
 		if (strpos($name, $this->requiredPrefix) !== 0) {
 			$phpcsFile->addError(
 				'The element "%s" must use the prefix "%s".',

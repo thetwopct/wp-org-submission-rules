@@ -8,7 +8,6 @@ class ForbiddenInlineTagsSniff implements Sniff
 {
     public function register()
     {
-        // We want to detect inline HTML and also PHP strings.
         return [T_INLINE_HTML, T_CONSTANT_ENCAPSED_STRING, T_DOUBLE_QUOTED_STRING];
     }
 
