@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
-<ruleset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="WPOrgSubmissionRules">
+<ruleset name="WPOrgSubmissionRules">
     <description>PHP_CodeSniffer rules (sniffs) to enforce rules required when submitting to WordPress.org Plugin Repository.</description>
     <arg name="extensions" value="php" />
+	<rule ref="WPOrgSubmissionRules.Sniffs.*" />
 </ruleset>
