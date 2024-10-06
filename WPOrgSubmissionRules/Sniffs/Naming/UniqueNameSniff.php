@@ -12,79 +12,63 @@ class UniqueNameSniff implements Sniff
     public $requiredPrefix = '';
 
     /**
-     * List of PHP native functions that shouldn't require a prefix.
+     * List of functions that require prefixed string arguments.
      */
-    private $phpFunctions = [
-        'defined',
-        'exit',
-        'isset',
-        'empty',
-        'array_merge',
-        'in_array',
-        'count',
-        'is_numeric',
-        'is_array',
-        'strpos',
-        'strlen',
-        // Add more PHP native functions as needed
+    private $functionsRequiringPrefix = [
+        'apply_filters',
+        'do_action',
+        'set_transient',
+        'get_transient',
+        'delete_transient',
+        'define',
+        'register_setting',
+        'add_option',
+        'update_option',
+        'delete_option',
+        'get_option',
     ];
 
     /**
-     * List of PHP constants that shouldn't require a prefix.
-     */
-    private $phpConstants = [
-        'ABSPATH',
-        'PHP_VERSION',
-        'PHP_OS',
-        'E_ERROR',
-        'E_WARNING',
-        'E_PARSE',
-        // Add more PHP constants as needed
-    ];
-
-    /**
-     * Register the tokens to look for (classes, constants, and strings).
+     * Register the tokens to look for.
      */
     public function register()
     {
         return [
-            T_CLASS,
             T_STRING,
             T_CONSTANT_ENCAPSED_STRING,
         ];
     }
 
     /**
-     * Process the token
+     * Process the token.
      */
     public function process(File $phpcsFile, $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
         $tokenContent = $tokens[$stackPtr]['content'];
 
-        // Skip native PHP functions and constants
-        if (in_array($tokenContent, $this->phpFunctions, true) || in_array(trim($tokenContent, '\'"'), $this->phpConstants, true)) {
+        // Skip checking HTML or general text in echo statements
+        if (stripos($tokenContent, '<') !== false && stripos($tokenContent, '>') !== false) {
+            return; // Ignore HTML tags like '<p>'
+        }
+
+        // Skip checking function and method names
+        if ($tokens[$stackPtr]['code'] === T_STRING) {
             return;
         }
 
-        // Check class names for prefix
-        if ($tokens[$stackPtr]['code'] === T_CLASS) {
-            $this->checkPrefix($phpcsFile, $stackPtr, $tokenContent);
-        }
+        // Check if the string argument is part of a function that requires a prefix
+        $prevTokenPtr = $phpcsFile->findPrevious(T_STRING, $stackPtr - 1);
+        $prevTokenContent = $tokens[$prevTokenPtr]['content'] ?? '';
 
-        // Check string or constant values
-        if ($tokens[$stackPtr]['code'] === T_STRING || $tokens[$stackPtr]['code'] === T_CONSTANT_ENCAPSED_STRING) {
-            // Skip gettext functions like __, _n, etc.
-            if (in_array($tokenContent, ['__', '_n', '_e', '_x'], true)) {
-                return;
-            }
-
-            $this->checkPrefix($phpcsFile, $stackPtr, $tokenContent);
+        // Only process string arguments in relevant functions
+        if (in_array($prevTokenContent, $this->functionsRequiringPrefix, true)) {
+            $this->checkPrefix($phpcsFile, $stackPtr, trim($tokenContent, '\'"'));
         }
     }
 
     /**
-     * Check if the given name has the correct prefix.
+     * Check if the given string argument has the correct prefix.
      */
     private function checkPrefix(File $phpcsFile, $stackPtr, $name)
     {
