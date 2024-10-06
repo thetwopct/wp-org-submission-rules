@@ -4,5 +4,5 @@
 
     <arg name="extensions" value="php" />
 
-    <rule ref="WPOrgSubmissionRules.Sniffs.ForbiddenInlineTagsSniff" />
+    <rule ref="WPOrgSubmissionRules" />
 </ruleset>
